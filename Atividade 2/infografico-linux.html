@@ -1,0 +1,805 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>30 Comandos Linux</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Plus+Jakarta+Sans:wght@400;500;600;800&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: #060d1a;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    padding: 40px 24px;
+    min-height: 100vh;
+  }
+
+  .page { max-width: 1200px; margin: 0 auto; }
+
+  /* HEADER */
+  .header {
+    text-align: center;
+    margin-bottom: 40px;
+    padding: 40px 24px 32px;
+    background: #0d1b2e;
+    border-radius: 20px;
+    border: 1px solid #1e3a5f;
+    position: relative;
+    overflow: hidden;
+  }
+  .header::before {
+    content: '';
+    position: absolute;
+    top: -60px; left: -60px;
+    width: 220px; height: 220px;
+    background: #1d4ed8;
+    opacity: 0.06;
+    border-radius: 50%;
+  }
+  .header::after {
+    content: '';
+    position: absolute;
+    bottom: -80px; right: -40px;
+    width: 300px; height: 300px;
+    background: #16a34a;
+    opacity: 0.05;
+    border-radius: 50%;
+  }
+  .header-badge {
+    display: inline-block;
+    background: #0f3d20;
+    color: #4ade80;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    padding: 4px 14px;
+    border-radius: 20px;
+    border: 1px solid #166534;
+    margin-bottom: 16px;
+  }
+  .header h1 {
+    font-size: 48px;
+    font-weight: 800;
+    color: #f0f6ff;
+    line-height: 1.1;
+    margin-bottom: 10px;
+  }
+  .header h1 span { color: #4ade80; }
+  .header p {
+    font-size: 15px;
+    color: #64748b;
+    font-family: 'JetBrains Mono', monospace;
+  }
+  .stats-row {
+    display: flex;
+    justify-content: center;
+    gap: 32px;
+    margin-top: 24px;
+    flex-wrap: wrap;
+  }
+  .stat { text-align: center; }
+  .stat-num {
+    font-size: 28px;
+    font-weight: 800;
+    color: #4ade80;
+  }
+  .stat-label {
+    font-size: 11px;
+    color: #475569;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+
+  /* GRID */
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+  }
+
+  @media (max-width: 768px) {
+    .grid { grid-template-columns: 1fr; }
+    .header h1 { font-size: 32px; }
+  }
+
+  /* CATEGORIA */
+  .categoria {
+    border-radius: 16px;
+    padding: 20px;
+    border: 1px solid rgba(255,255,255,0.06);
+  }
+  .cat-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 14px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+  }
+  .cat-icon {
+    width: 32px; height: 32px;
+    border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 16px;
+    flex-shrink: 0;
+  }
+  .cat-info h2 {
+    font-size: 13px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+  .cat-info span { font-size: 10px; color: #475569; }
+
+  /* COMANDO */
+  .cmd-card {
+    background: rgba(0,0,0,0.25);
+    border-radius: 10px;
+    padding: 10px 12px;
+    margin-bottom: 8px;
+    display: grid;
+    grid-template-columns: 100px 1fr;
+    gap: 10px;
+    align-items: start;
+  }
+  .cmd-card:last-child { margin-bottom: 0; }
+  .cmd-tag {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    font-weight: 700;
+    padding: 3px 7px;
+    border-radius: 6px;
+    display: inline-block;
+    margin-bottom: 4px;
+    word-break: break-all;
+  }
+  .cmd-desc {
+    font-size: 12px;
+    color: #cbd5e1;
+    font-weight: 500;
+    margin-bottom: 4px;
+    line-height: 1.4;
+  }
+  .cmd-example {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    color: #4ade80;
+    margin-bottom: 2px;
+    word-break: break-all;
+  }
+  .cmd-example-desc {
+    font-size: 10px;
+    color: #475569;
+    line-height: 1.3;
+  }
+
+  /* ── CORES POR CATEGORIA ── */
+  .cat-nav    { background: #071a0f; }
+  .cat-files  { background: #120d1e; }
+  .cat-view   { background: #0a1628; }
+  .cat-search { background: #1a0e06; }
+  .cat-redir  { background: #14081a; }
+  .cat-perm   { background: #1a0a06; }
+  .cat-proc   { background: #180a0a; }
+  .cat-sys    { background: #0d1520; }
+  .cat-net    { background: #071518; }
+  .cat-pack   { background: #131200; }
+
+  .icon-nav    { background: #0f3d20; }
+  .icon-files  { background: #2e1065; }
+  .icon-view   { background: #1e3a5f; }
+  .icon-search { background: #431407; }
+  .icon-redir  { background: #3b0764; }
+  .icon-perm   { background: #431207; }
+  .icon-proc   { background: #450a0a; }
+  .icon-sys    { background: #1e3a5f; }
+  .icon-net    { background: #0f3830; }
+  .icon-pack   { background: #3d3900; }
+
+  .col-nav    { color: #4ade80; }
+  .col-files  { color: #a78bfa; }
+  .col-view   { color: #60a5fa; }
+  .col-search { color: #fb923c; }
+  .col-redir  { color: #e879f9; }
+  .col-perm   { color: #f97316; }
+  .col-proc   { color: #f87171; }
+  .col-sys    { color: #38bdf8; }
+  .col-net    { color: #2dd4bf; }
+  .col-pack   { color: #facc15; }
+
+  .tag-nav    { background: #0f3d20; color: #4ade80; }
+  .tag-files  { background: #2e1065; color: #a78bfa; }
+  .tag-view   { background: #1e3a5f; color: #60a5fa; }
+  .tag-search { background: #431407; color: #fb923c; }
+  .tag-redir  { background: #3b0764; color: #e879f9; }
+  .tag-perm   { background: #431207; color: #f97316; }
+  .tag-proc   { background: #450a0a; color: #f87171; }
+  .tag-sys    { background: #1e3a5f; color: #38bdf8; }
+  .tag-net    { background: #0f3830; color: #2dd4bf; }
+  .tag-pack   { background: #3d3900; color: #facc15; }
+
+  /* FOOTER */
+  .footer {
+    text-align: center;
+    margin-top: 32px;
+    padding: 16px;
+    font-size: 11px;
+    color: #334155;
+    font-family: 'JetBrains Mono', monospace;
+    border-top: 1px solid #0f172a;
+  }
+  .footer a { color: #475569; text-decoration: none; }
+
+  /* PRINT */
+  @media print {
+    body { background: #060d1a; padding: 10px; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    .btn-print { display: none; }
+  }
+
+  /* BOTÃO */
+  .btn-print {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    background: #16a34a;
+    color: #fff;
+    border: none;
+    border-radius: 10px;
+    padding: 12px 20px;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    z-index: 100;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.4);
+    transition: background 0.2s;
+  }
+  .btn-print:hover { background: #15803d; }
+</style>
+</head>
+<body>
+
+<button class="btn-print" onclick="window.print()">⬇ Exportar PDF</button>
+
+<div class="page">
+
+  <!-- HEADER -->
+  <div class="header">
+    <div class="header-badge">$ linux --comandos-basicos</div>
+    <h1>30 Comandos <span>Linux</span></h1>
+    <p>Guia de referência rápida com exemplos comentados</p>
+    <div class="stats-row">
+      <div class="stat"><div class="stat-num">35+</div><div class="stat-label">Comandos</div></div>
+      <div class="stat"><div class="stat-num">10</div><div class="stat-label">Categorias</div></div>
+      <div class="stat"><div class="stat-num">35+</div><div class="stat-label">Exemplos</div></div>
+    </div>
+  </div>
+
+  <!-- GRID -->
+  <div class="grid">
+
+    <!-- NAVEGAÇÃO -->
+    <div class="categoria cat-nav">
+      <div class="cat-header">
+        <div class="cat-icon icon-nav">🗂</div>
+        <div class="cat-info">
+          <h2 class="col-nav">Navegação</h2>
+          <span>Mover-se pelo sistema de arquivos</span>
+        </div>
+      </div>
+      <div class="cmd-card">
+        <div class="cmd-left"><span class="cmd-tag tag-nav">ls</span></div>
+        <div class="cmd-right">
+          <div class="cmd-desc">Listar arquivos e pastas do diretório</div>
+          <div class="cmd-example">$ ls -la</div>
+          <div class="cmd-example-desc">Lista tudo com detalhes e arquivos ocultos</div>
+        </div>
+      </div>
+      <div class="cmd-card">
+        <div class="cmd-left"><span class="cmd-tag tag-nav">pwd</span></div>
+        <div class="cmd-right">
+          <div class="cmd-desc">Mostrar o diretório atual completo</div>
+          <div class="cmd-example">$ pwd</div>
+          <div class="cmd-example-desc">Retorna ex: /home/aluno/documentos</div>
+        </div>
+      </div>
+      <div class="cmd-card">
+        <div class="cmd-left"><span class="cmd-tag tag-nav">cd</span></div>
+        <div class="cmd-right">
+          <div class="cmd-desc">Navegar para outro diretório</div>
+          <div class="cmd-example">$ cd documentos</div>
+          <div class="cmd-example-desc">Entra na pasta "documentos"</div>
+        </div>
+      </div>
+      <div class="cmd-card">
+        <div class="cmd-left"><span class="cmd-tag tag-nav">cd ..</span></div>
+        <div class="cmd-right">
+          <div class="cmd-desc">Voltar para a pasta anterior (pai)</div>
+          <div class="cmd-example">$ cd ..</div>
+          <div class="cmd-example-desc">Sobe um nível na hierarquia de pastas</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ARQUIVOS E PASTAS -->
+    <div class="categoria cat-files">
+      <div class="cat-header">
+        <div class="cat-icon icon-files">📁</div>
+        <div class="cat-info">
+          <h2 class="col-files">Arquivos e Pastas</h2>
+          <span>Criar, copiar, mover e remover</span>
+        </div>
+      </div>
+      <div class="cmd-card">
+        <div class="cmd-left"><span class="cmd-tag tag-files">mkdir</span></div>
+        <div class="cmd-right">
+          <div class="cmd-desc">Criar uma nova pasta</div>
+          <div class="cmd-example">$ mkdir "minha pasta"</div>
+          <div class="cmd-example-desc">Aspas permitem espaço no nome</div>
+        </div>
+      </div>
+      <div class="cmd-card">
+        <div class="cmd-left"><span class="cmd-tag tag-files">touch</span></div>
+        <div class="cmd-right">
+          <div class="cmd-desc">Criar arquivo vazio rapidamente</div>
+          <div class="cmd-example">$ touch arquivo.txt</div>
+          <div class="cmd-example-desc">Cria "arquivo.txt" vazio no diretório atual</div>
+        </div>
+      </div>
+      <div class="cmd-card">
+        <div class="cmd-left"><span class="cmd-tag tag-files">nano</span></div>
+        <div class="cmd-right">
+          <div class="cmd-desc">Editar arquivo de texto no terminal</div>
+          <div class="cmd-example">$ nano arquivo.txt</div>
+          <div class="cmd-example-desc">Abre editor — Ctrl+O salva, Ctrl+X sai</div>
+        </div>
+      </div>
+      <div class="cmd-card">
+        <div class="cmd-left"><span class="cmd-tag tag-files">cp</span></div>
+        <div class="cmd-right">
+          <div class="cmd-desc">Copiar arquivo ou pasta</div>
+          <div class="cmd-example">$ cp -r pasta/ backup/</div>
+          <div class="cmd-example-desc">Copia toda a pasta para "backup/"</div>
+        </div>
+      </div>
+      <div class="cmd-card">
+        <div class="cmd-left"><span class="cmd-tag tag-files">mv</span></div>
+        <div class="cmd-right">
+          <div class="cmd-desc">Mover ou renomear arquivo</div>
+          <div class="cmd-example">$ mv velho.txt novo.txt</div>
+          <div class="cmd-example-desc">Renomeia ou move o arquivo</div>
+        </div>
+      </div>
+      <div class="cmd-card">
+        <div class="cmd-left"><span class="cmd-tag tag-files">rm</span></div>
+        <div class="cmd-right">
+          <div class="cmd-desc">Remover arquivo (sem lixeira!)</div>
+          <div class="cmd-example">$ rm arquivo.txt</div>
+          <div class="cmd-example-desc">Apaga permanentemente — sem recuperação</div>
+        </div>
+      </div>
+      <div class="cmd-card">
+        <div class="cmd-left"><span class="cmd-tag tag-files">rmdir</span></div>
+        <div class="cmd-right">
+          <div class="cmd-desc">Remover pasta vazia</div>
+          <div class="cmd-example">$ rmdir pasta/</div>
+          <div class="cmd-example-desc">Só funciona se a pasta estiver vazia</div>
+        </div>
+      </div>
+      <div class="cmd-card">
+        <div class="cmd-left"><span class="cmd-tag tag-files">rm -rf</span></div>
+        <div class="cmd-right">
+          <div class="cmd-desc">Remover pasta e todo conteúdo à força</div>
+          <div class="cmd-example">$ rm -rf pasta/</div>
+          <div class="cmd-example-desc">⚠ Irreversível — use com muito cuidado!</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- VISUALIZAÇÃO -->
+    <div class="categoria cat-view">
+      <div class="cat-header">
+        <div class="cat-icon icon-view">👁</div>
+        <div class="cat-info">
+          <h2 class="col-view">Visualização de Arquivos</h2>
+          <span>Ler e inspecionar conteúdo</span>
+        </div>
+      </div>
+      <div class="cmd-card">
+        <div class="cmd-left"><span class="cmd-tag tag-view">cat</span></div>
+        <div class="cmd-right">
+          <div class="cmd-desc">Exibir conteúdo do arquivo no terminal</div>
+          <div class="cmd-example">$ cat README.md</div>
+          <div class="cmd-example-desc">Mostra o conteúdo completo de uma vez</div>
+        </div>
+      </div>
+      <div class="cmd-card">
+        <div class="cmd-left"><span class="cmd-tag tag-view">less</span></div>
+        <div class="cmd-right">
+          <div class="cmd-desc">Visualizar com rolagem paginada</div>
+          <div class="cmd-example">$ less log.txt</div>
+          <div class="cmd-example-desc">Navega com setas — q para sair</div>
+        </div>
+      </div>
+      <div class="cmd-card">
+        <div class="cmd-left"><span class="cmd-tag tag-view">head</span></div>
+        <div class="cmd-right">
+          <div class="cmd-desc">Ver as primeiras linhas do arquivo</div>
+          <div class="cmd-example">$ head -n 10 arquivo.txt</div>
+          <div class="cmd-example-desc">Mostra as 10 primeiras linhas</div>
+        </div>
+      </div>
+      <div class="cmd-card">
+        <div class="cmd-left"><span class="cmd-tag tag-view">tail</span></div>
+        <div class="cmd-right">
+          <div class="cmd-desc">Ver as últimas linhas / monitorar em tempo real</div>
+          <div class="cmd-example">$ tail -f log.txt</div>
+          <div class="cmd-example-desc">Acompanha o arquivo conforme cresce</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- BUSCA -->
+    <div class="categoria cat-search">
+      <div class="cat-header">
+        <div class="cat-icon icon-search">🔍</div>
+        <div class="cat-info">
+          <h2 class="col-search">Busca</h2>
+          <span>Encontrar texto e arquivos no sistema</span>
+        </div>
+      </div>
+      <div class="cmd-card">
+        <div class="cmd-left"><span class="cmd-tag tag-search">grep</span></div>
+        <div class="cmd-right">
+          <div class="cmd-desc">Buscar texto dentro de arquivos</div>
+          <div class="cmd-example">$ grep -i "erro" log.txt</div>
+          <div class="cmd-example-desc">Busca "erro" ignorando maiúsculas/minúsculas</div>
+        </div>
+      </div>
+      <div class="cmd-card">
+        <div class="cmd-left"><span class="cmd-tag tag-search">find</span></div>
+        <div class="cmd-right">
+          <div class="cmd-desc">Localizar arquivos no sistema</div>
+          <div class="cmd-example">$ find . -name "*.txt"</div>
+          <div class="cmd-example-desc">Encontra todos arquivos .txt aqui</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- REDIRECIONADORES -->
+    <div class="categoria cat-redir">
+      <div class="cat-header">
+        <div class="cat-icon icon-redir">➤</div>
+        <div class="cat-info">
+          <h2 class="col-redir">Redirecionadores</h2>
+          <span>Controlar o fluxo de saída de comandos</span>
+        </div>
+      </div>
+      <div class="cmd-card">
+        <div class="cmd-left"><span class="cmd-tag tag-redir">&gt;</span></div>
+        <div class="cmd-right">
+          <div class="cmd-desc">Redirecionar saída para arquivo (sobrescreve)</div>
+          <div class="cmd-example">$ ls > lista.txt</div>
+          <div class="cmd-example-desc">Salva a saída do ls em lista.txt</div>
+        </div>
+      </div>
+      <div class="cmd-card">
+        <div class="cmd-left"><span class="cmd-tag tag-redir">&gt;&gt;</span></div>
+        <div class="cmd-right">
+          <div class="cmd-desc">Redirecionar saída (adiciona ao final)</div>
+          <div class="cmd-example">$ echo "ok" >> log.txt</div>
+          <div class="cmd-example-desc">Acrescenta sem apagar o conteúdo anterior</div>
+        </div>
+      </div>
+      <div class="cmd-card">
+        <div class="cmd-left"><span class="cmd-tag tag-redir">|</span></div>
+        <div class="cmd-right">
+          <div class="cmd-desc">Pipe: passar saída de um comando para outro</div>
+          <div class="cmd-example">$ ls | grep .txt</div>
+          <div class="cmd-example-desc">Filtra somente arquivos .txt na listagem</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PERMISSÕES -->
+    <div class="categoria cat-perm">
+      <div class="cat-header">
+        <div class="cat-icon icon-perm">🔐</div>
+        <div class="cat-info">
+          <h2 class="col-perm">Permissões</h2>
+          <span>Controlar acesso a arquivos</span>
+        </div>
+      </div>
+      <div class="cmd-card">
+        <div class="cmd-left"><span class="cmd-tag tag-perm">chmod</span></div>
+        <div class="cmd-right">
+          <div class="cmd-desc">Alterar permissões de acesso do arquivo</div>
+          <div class="cmd-example">$ chmod +x script.sh</div>
+          <div class="cmd-example-desc">Torna o script executável</div>
+        </div>
+      </div>
+      <div class="cmd-card">
+        <div class="cmd-left"><span class="cmd-tag tag-perm">chown</span></div>
+        <div class="cmd-right">
+          <div class="cmd-desc">Alterar o proprietário do arquivo</div>
+          <div class="cmd-example">$ chown aluno arquivo.txt</div>
+          <div class="cmd-example-desc">Muda o dono para o usuário "aluno"</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PROCESSOS -->
+    <div class="categoria cat-proc">
+      <div class="cat-header">
+        <div class="cat-icon icon-proc">⚙</div>
+        <div class="cat-info">
+          <h2 class="col-proc">Processos</h2>
+          <span>Gerenciar o que está rodando</span>
+        </div>
+      </div>
+      <div class="cmd-card">
+        <div class="cmd-left"><span class="cmd-tag tag-proc">ps</span></div>
+        <div class="cmd-right">
+          <div class="cmd-desc">Listar processos da sessão atual</div>
+          <div class="cmd-example">$ ps</div>
+          <div class="cmd-example-desc">Mostra processos do usuário logado</div>
+        </div>
+      </div>
+      <div class="cmd-card">
+        <div class="cmd-left"><span class="cmd-tag tag-proc">ps aux</span></div>
+        <div class="cmd-right">
+          <div class="cmd-desc">Listar todos os processos do sistema</div>
+          <div class="cmd-example">$ ps aux</div>
+          <div class="cmd-example-desc">Exibe todos com PID, CPU e memória</div>
+        </div>
+      </div>
+      <div class="cmd-card">
+        <div class="cmd-left"><span class="cmd-tag tag-proc">top</span></div>
+        <div class="cmd-right">
+          <div class="cmd-desc">Monitor de processos em tempo real</div>
+          <div class="cmd-example">$ top</div>
+          <div class="cmd-example-desc">Mostra CPU e memória ao vivo (q = sair)</div>
+        </div>
+      </div>
+      <div class="cmd-card">
+        <div class="cmd-left"><span class="cmd-tag tag-proc">htop</span></div>
+        <div class="cmd-right">
+          <div class="cmd-desc">Monitor interativo com interface visual</div>
+          <div class="cmd-example">$ htop</div>
+          <div class="cmd-example-desc">Versão colorida e interativa do top</div>
+        </div>
+      </div>
+      <div class="cmd-card">
+        <div class="cmd-left"><span class="cmd-tag tag-proc">kill</span></div>
+        <div class="cmd-right">
+          <div class="cmd-desc">Encerrar um processo pelo PID</div>
+          <div class="cmd-example">$ kill -9 1234</div>
+          <div class="cmd-example-desc">Força encerramento do processo 1234</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SISTEMA -->
+    <div class="categoria cat-sys">
+      <div class="cat-header">
+        <div class="cat-icon icon-sys">💻</div>
+        <div class="cat-info">
+          <h2 class="col-sys">Sistema e Shell</h2>
+          <span>Informações e utilitários essenciais</span>
+        </div>
+      </div>
+      <div class="cmd-card">
+        <div class="cmd-left"><span class="cmd-tag tag-sys">whoami</span></div>
+        <div class="cmd-right">
+          <div class="cmd-desc">Exibir nome do usuário atual</div>
+          <div class="cmd-example">$ whoami</div>
+          <div class="cmd-example-desc">Retorna o usuário logado no momento</div>
+        </div>
+      </div>
+      <div class="cmd-card">
+        <div class="cmd-left"><span class="cmd-tag tag-sys">hostname</span></div>
+        <div class="cmd-right">
+          <div class="cmd-desc">Ver o nome da máquina na rede</div>
+          <div class="cmd-example">$ hostname</div>
+          <div class="cmd-example-desc">Exibe o nome do host configurado</div>
+        </div>
+      </div>
+      <div class="cmd-card">
+        <div class="cmd-left"><span class="cmd-tag tag-sys">uname</span></div>
+        <div class="cmd-right">
+          <div class="cmd-desc">Ver informações do sistema operacional</div>
+          <div class="cmd-example">$ uname -a</div>
+          <div class="cmd-example-desc">Mostra kernel, arquitetura e versão</div>
+        </div>
+      </div>
+      <div class="cmd-card">
+        <div class="cmd-left"><span class="cmd-tag tag-sys">lscpu</span></div>
+        <div class="cmd-right">
+          <div class="cmd-desc">Ver informações da CPU</div>
+          <div class="cmd-example">$ lscpu</div>
+          <div class="cmd-example-desc">Exibe arquitetura, núcleos e modelo</div>
+        </div>
+      </div>
+      <div class="cmd-card">
+        <div class="cmd-left"><span class="cmd-tag tag-sys">lsusb</span></div>
+        <div class="cmd-right">
+          <div class="cmd-desc">Listar dispositivos USB conectados</div>
+          <div class="cmd-example">$ lsusb</div>
+          <div class="cmd-example-desc">Mostra todos os periféricos USB</div>
+        </div>
+      </div>
+      <div class="cmd-card">
+        <div class="cmd-left"><span class="cmd-tag tag-sys">free -h</span></div>
+        <div class="cmd-right">
+          <div class="cmd-desc">Ver uso de memória RAM</div>
+          <div class="cmd-example">$ free -h</div>
+          <div class="cmd-example-desc">Mostra RAM total, usada e livre (-m = MB)</div>
+        </div>
+      </div>
+      <div class="cmd-card">
+        <div class="cmd-left"><span class="cmd-tag tag-sys">df -h</span></div>
+        <div class="cmd-right">
+          <div class="cmd-desc">Ver espaço disponível em disco</div>
+          <div class="cmd-example">$ df -h</div>
+          <div class="cmd-example-desc">Mostra uso do disco em GB/MB legível</div>
+        </div>
+      </div>
+      <div class="cmd-card">
+        <div class="cmd-left"><span class="cmd-tag tag-sys">ncdu</span></div>
+        <div class="cmd-right">
+          <div class="cmd-desc">Analisar espaço em disco visualmente</div>
+          <div class="cmd-example">$ ncdu</div>
+          <div class="cmd-example-desc">Interface interativa — mostra o que ocupa mais</div>
+        </div>
+      </div>
+      <div class="cmd-card">
+        <div class="cmd-left"><span class="cmd-tag tag-sys">echo</span></div>
+        <div class="cmd-right">
+          <div class="cmd-desc">Imprimir texto ou variável no terminal</div>
+          <div class="cmd-example">$ echo $HOME</div>
+          <div class="cmd-example-desc">Exibe o valor da variável de ambiente</div>
+        </div>
+      </div>
+      <div class="cmd-card">
+        <div class="cmd-left"><span class="cmd-tag tag-sys">man</span></div>
+        <div class="cmd-right">
+          <div class="cmd-desc">Abrir o manual de qualquer comando</div>
+          <div class="cmd-example">$ man ls</div>
+          <div class="cmd-example-desc">Mostra todas as opções do comando ls</div>
+        </div>
+      </div>
+      <div class="cmd-card">
+        <div class="cmd-left"><span class="cmd-tag tag-sys">sudo</span></div>
+        <div class="cmd-right">
+          <div class="cmd-desc">Executar comando como administrador</div>
+          <div class="cmd-example">$ sudo apt update</div>
+          <div class="cmd-example-desc">Atualiza pacotes com permissão root</div>
+        </div>
+      </div>
+      <div class="cmd-card">
+        <div class="cmd-left"><span class="cmd-tag tag-sys">history</span></div>
+        <div class="cmd-right">
+          <div class="cmd-desc">Ver histórico de comandos digitados</div>
+          <div class="cmd-example">$ history 10</div>
+          <div class="cmd-example-desc">Mostra os 10 últimos comandos usados</div>
+        </div>
+      </div>
+      <div class="cmd-card">
+        <div class="cmd-left"><span class="cmd-tag tag-sys">alias</span></div>
+        <div class="cmd-right">
+          <div class="cmd-desc">Criar atalho para um comando longo</div>
+          <div class="cmd-example">$ alias ll="ls -la"</div>
+          <div class="cmd-example-desc">Digitar "ll" executa "ls -la"</div>
+        </div>
+      </div>
+      <div class="cmd-card">
+        <div class="cmd-left"><span class="cmd-tag tag-sys">clear</span></div>
+        <div class="cmd-right">
+          <div class="cmd-desc">Limpar a tela do terminal</div>
+          <div class="cmd-example">$ clear</div>
+          <div class="cmd-example-desc">Equivalente ao atalho Ctrl + L</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- REDE -->
+    <div class="categoria cat-net">
+      <div class="cat-header">
+        <div class="cat-icon icon-net">🌐</div>
+        <div class="cat-info">
+          <h2 class="col-net">Rede e Internet</h2>
+          <span>Conectar, baixar e acessar remotamente</span>
+        </div>
+      </div>
+      <div class="cmd-card">
+        <div class="cmd-left"><span class="cmd-tag tag-net">hostname -i</span></div>
+        <div class="cmd-right">
+          <div class="cmd-desc">Ver o endereço IP da máquina</div>
+          <div class="cmd-example">$ hostname -i</div>
+          <div class="cmd-example-desc">Retorna o IP local do host</div>
+        </div>
+      </div>
+      <div class="cmd-card">
+        <div class="cmd-left"><span class="cmd-tag tag-net">ip a</span></div>
+        <div class="cmd-right">
+          <div class="cmd-desc">Ver interfaces de rede e endereços IP</div>
+          <div class="cmd-example">$ ip a</div>
+          <div class="cmd-example-desc">Lista todas as interfaces com IPs e status</div>
+        </div>
+      </div>
+      <div class="cmd-card">
+        <div class="cmd-left"><span class="cmd-tag tag-net">ping</span></div>
+        <div class="cmd-right">
+          <div class="cmd-desc">Testar conexão com outro host</div>
+          <div class="cmd-example">$ ping -c 4 google.com</div>
+          <div class="cmd-example-desc">Envia 4 pacotes e mede a latência</div>
+        </div>
+      </div>
+      <div class="cmd-card">
+        <div class="cmd-left"><span class="cmd-tag tag-net">wget</span></div>
+        <div class="cmd-right">
+          <div class="cmd-desc">Baixar arquivo da internet</div>
+          <div class="cmd-example">$ wget https://site.com/arq.zip</div>
+          <div class="cmd-example-desc">Faz o download direto pelo terminal</div>
+        </div>
+      </div>
+      <div class="cmd-card">
+        <div class="cmd-left"><span class="cmd-tag tag-net">curl</span></div>
+        <div class="cmd-right">
+          <div class="cmd-desc">Transferir dados via URL (APIs, downloads)</div>
+          <div class="cmd-example">$ curl https://api.exemplo.com</div>
+          <div class="cmd-example-desc">Faz requisição GET e exibe a resposta</div>
+        </div>
+      </div>
+      <div class="cmd-card">
+        <div class="cmd-left"><span class="cmd-tag tag-net">ssh</span></div>
+        <div class="cmd-right">
+          <div class="cmd-desc">Conectar a servidor remoto com segurança</div>
+          <div class="cmd-example">$ ssh <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="e3828f968d8ca3908691958a878c91cd808c8e">[email&#160;protected]</a></div>
+          <div class="cmd-example-desc">Abre sessão remota criptografada</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- COMPACTAÇÃO -->
+    <div class="categoria cat-pack">
+      <div class="cat-header">
+        <div class="cat-icon icon-pack">📦</div>
+        <div class="cat-info">
+          <h2 class="col-pack">Compactação</h2>
+          <span>Compactar e extrair arquivos</span>
+        </div>
+      </div>
+      <div class="cmd-card">
+        <div class="cmd-left"><span class="cmd-tag tag-pack">tar</span></div>
+        <div class="cmd-right">
+          <div class="cmd-desc">Compactar ou extrair arquivos .tar.gz</div>
+          <div class="cmd-example">$ tar -czf backup.tar.gz pasta/</div>
+          <div class="cmd-example-desc">Compacta a pasta em formato .tar.gz</div>
+        </div>
+      </div>
+      <div class="cmd-card">
+        <div class="cmd-left"><span class="cmd-tag tag-pack">zip</span></div>
+        <div class="cmd-right">
+          <div class="cmd-desc">Compactar em formato .zip (multi-sistema)</div>
+          <div class="cmd-example">$ zip -r projeto.zip pasta/</div>
+          <div class="cmd-example-desc">Gera .zip compatível com Windows</div>
+        </div>
+      </div>
+      <div class="cmd-card">
+        <div class="cmd-left"><span class="cmd-tag tag-pack">unzip</span></div>
+        <div class="cmd-right">
+          <div class="cmd-desc">Extrair arquivo .zip</div>
+          <div class="cmd-example">$ unzip arquivo.zip</div>
+          <div class="cmd-example-desc">Descompacta no diretório atual</div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /grid -->
+
+
+</div><!-- /page -->
+
+</body>
+</html>
