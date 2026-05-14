@@ -1,0 +1,13 @@
+esbenp.prettier-vscode
+dbaeumer.vscode-eslint
+ecmel.vscode-html-css
+formulahendry.auto-close-tag
+formulahendry.auto-rename-tag
+ritwickdey.liveserver
+eamodio.gitlens
+christian-kohler.path-intellisense
+aaron-bond.better-comments
+vscode-icons-team.vscode-icons
+rangav.vscode-thunder-client
+pranaygp.vscode-css-peek
+usernamehw.errorlens
